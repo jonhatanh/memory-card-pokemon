@@ -15,3 +15,11 @@
       sans-serif;
   }
 }
+
+.main-title {
+  @apply text-slate-700 text-6xl text-center  ;
+  text-shadow: 2px 2px  white,
+  -2px -2px white,
+  0 2px white,
+  0 -2px white;
+}
