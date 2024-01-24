@@ -17,9 +17,28 @@
 }
 
 .main-title {
-  @apply text-slate-700 text-6xl text-center  ;
-  text-shadow: 2px 2px  white,
-  -2px -2px white,
-  0 2px white,
-  0 -2px white;
+  @apply text-center text-6xl text-slate-700;
+  text-shadow:
+    2px 2px white,
+    -2px -2px white,
+    0 2px white,
+    0 -2px white;
+}
+
+.card-gradient {
+  background: rgb(0, 0, 0);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(30,41,59, 1) 10%,
+    rgba(30,41,59, 1) 90%,
+    rgba(0, 0, 0, 1) 100%
+  );
+}
+.card-gradient:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(30,41,59, 1) 15%,
+    rgba(30,41,59, 1) 85%
+  );
 }
