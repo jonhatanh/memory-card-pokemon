@@ -5,7 +5,7 @@ export default function MenuButton ({ children, onClick }) {
   return (
     <button
       onClick={() => onClick()}
-      className='group flex items-center text-2xl text-white'
+      className='hover:text-main group flex animate-pulse items-center text-2xl  text-white transition-all'
     >
       <FontAwesomeIcon
         className='mb-1 opacity-0 duration-150 group-hover:opacity-100'
