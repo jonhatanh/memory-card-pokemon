@@ -46,7 +46,7 @@ function shuffleCards (list) {
 export default function GameLayout ({ handleOpenMainModal }) {
   const [pokemons, setPokemons] = useState([])
   const [settingsIsOpen, setSettingsIsOpen] = useState(false)
-  const [totalPokemons, setTotalPokemons] = useState(10)
+  const [totalPokemons, setTotalPokemons] = useState(20)
   const [score, setScore] = useState(0)
   const [bestScore, setBestScore] = useState(0)
   const [cardsSelected, setCardsSelected] = useState([])
@@ -58,11 +58,11 @@ export default function GameLayout ({ handleOpenMainModal }) {
   // Fetch Pokemons
   useEffect(() => {
     const pokeArray = []
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < totalPokemons; i++) {
       pokeArray.push({ ...pokemon, id: i, name: pokemon.name + i })
     }
     setPokemons(pokeArray)
-  }, [])
+  }, [totalPokemons])
 
   // Get Best Score
   useEffect(() => {
@@ -84,6 +84,14 @@ export default function GameLayout ({ handleOpenMainModal }) {
   useEffect(() => {
     if (score === totalPokemons) {
       setGameMessage('You did it! 🗿')
+      gameMessageRef.current.classList.remove('hidden')
+      gameMessageRef.current.classList.add('flex')
+      cardContainerRef.current.classList.add('pointer-events-none')
+    }
+    
+    const elementRef = cardContainerRef.current
+    return () => {
+      elementRef.classList.remove('pointer-events-none')
     }
   }, [score, totalPokemons])
 
@@ -93,8 +101,7 @@ export default function GameLayout ({ handleOpenMainModal }) {
   function handleCardClick (pokemonId) {
     if (cardsSelected.includes(pokemonId)) {
       setGameMessage(getMessage(score, totalPokemons))
-      setCardsSelected([])
-      setScore(0)
+      resetGame()
       gameMessageRef.current.classList.remove('hidden')
       gameMessageRef.current.classList.add('flex')
       return
@@ -123,6 +130,18 @@ export default function GameLayout ({ handleOpenMainModal }) {
     gameMessageRef.current.classList.add('hidden')
   }
 
+  function resetGame() {
+    setCardsSelected([])
+    setScore(0)
+  }
+  function increaseDifficulty() {
+    setTotalPokemons(totalPokemons + 5)
+  }
+  function handleNextLevel() {
+    resetGame()
+    increaseDifficulty()
+  }
+
   const className = {
     'main-div': `absolute top-0 left-0 right-0 bottom-0 mx-auto min-h-dvh w-full flex flex-col justify-start gap-5 transition-all duration-300 max-w-screen-2xl ${settingsIsOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`
   }
@@ -135,12 +154,14 @@ export default function GameLayout ({ handleOpenMainModal }) {
           score={score}
           bestScore={bestScore}
           totalPokemons={totalPokemons}
+          gameEnded={gameEnded}
+          handleNextLevel={handleNextLevel}
         />
         {/* Game Body */}
         <div
           ref={cardContainerRef}
           onAnimationEndCapture={handleAnimationEnd}
-          className='mx-auto flex min-h-32 flex-wrap items-center justify-center gap-8 px-5 py-10 xl:max-w-screen-xl'
+          className='mx-auto flex min-h-32 flex-wrap items-center justify-center gap-8 px-5 py-10 xl:max-w-screen-xl overflow-y-scroll '
         >
           {/* Cards */}
           {pokemons.map((pokemon) => (

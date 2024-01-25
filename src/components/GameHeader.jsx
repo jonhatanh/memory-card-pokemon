@@ -1,11 +1,26 @@
-import { faGear, faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faForward,
+  faGear,
+  faPlay,
+  faRotateRight,
+  faVolumeHigh
+} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import IconButton from './IconButton'
 
-export default function GameHeader({ handleClickSettings, handleClickMusic, score, bestScore, totalPokemons}) {
+export default function GameHeader({
+  handleClickSettings,
+  handleClickMusic,
+  score,
+  bestScore,
+  totalPokemons,
+  gameEnded,
+  handleNextLevel,
+}) {
   return (
-    <header className='mt-10 flex flex-wrap border-2 border-sky-500'>
+    <header className='mt-10 flex flex-wrap '>
       {/* Top header */}
-      <div className='relative flex w-full flex-wrap items-center justify-center gap-x-5'>
+      <div className='relative flex w-full flex-wrap items-center justify-center gap-x-5 gap-y-7'>
         <div className='flex flex-wrap items-center justify-center gap-1'>
           <img
             className='h-16 w-16 pb-1 '
@@ -16,20 +31,27 @@ export default function GameHeader({ handleClickSettings, handleClickMusic, scor
             Memory Card Game
           </h1>
         </div>
-        <div className='flex flex-wrap items-center gap-2 text-4xl text-white md:absolute md:right-3'>
-          <button onClick={() => handleClickMusic()} className=''>
-            <FontAwesomeIcon className='mt-2' icon={faVolumeHigh} />
-          </button>
-          <button
+        <div className='flex flex-wrap items-center gap-2 text-4xl text-white md:absolute md:right-7'>
+          {gameEnded && (
+            <IconButton hoverText='Next Level' onClick={()=> handleNextLevel()}>
+              <FontAwesomeIcon className='text-main' icon={faForward} />
+            </IconButton>
+          )}
+          <IconButton hoverText='Mute Music' onClick={() => handleClickMusic()}>
+            <FontAwesomeIcon icon={faVolumeHigh} />
+          </IconButton>
+          <IconButton
+            hoverText='Settings'
             onClick={() => handleClickSettings()}
-            className='ml-auto mr-3 text-4xl text-white hover:animate-spin'
           >
-            <FontAwesomeIcon className='mt-2' icon={faGear} />
-          </button>
+            <FontAwesomeIcon icon={faGear} />
+          </IconButton>
         </div>
       </div>
       <div className='flex flex-1 flex-wrap items-center justify-center gap-5 text-3xl text-white'>
-        <p>Current Score: {score} / {totalPokemons}</p>
+        <p>
+          Current Score: {score} / {totalPokemons}
+        </p>
         <p className='text-main  drop-shadow-surrounded-blue'>
           Best Score: {bestScore}
         </p>
