@@ -1,9 +1,8 @@
-import { faGear, faVolumeHigh } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import PokemonCard from './PokemonCard'
 import Modal from './Modal'
 import MenuButton from './MenuButton'
+import GameHeader from './GameHeader'
 const pokemon = {
   id: 470,
   name: 'leafeon',
@@ -15,19 +14,60 @@ const pokemon = {
   }
 }
 
-export default function GameLayout({ handleOpenMainModal }) {
-  const [pokemons, setPokemons] = useState(() => {
-    const pokemons = []
-    for (let i = 0; i < 10; i++) {
-      pokemons.push({ ...pokemon, id: i, name: pokemon.name + i })
-    }
-    console.log(pokemons)
-    return pokemons
-  })
+export default function GameLayout ({ handleOpenMainModal }) {
+  const [pokemons, setPokemons] = useState([])
   const [settingsIsOpen, setSettingsIsOpen] = useState(false)
+  const [totalPokemons, setTotalPokemons] = useState(10)
+  const [score, setScore] = useState(0)
+  const [bestScore, setBestScore] = useState(0)
+  const [gameEnded, setGameEnded] = useState(false)
+  const [gameLoss, setGameLoss] = useState(false)
+  const [cardsSelected, setCardsSelected] = useState([])
 
-  function handleClickSettings() {
+  // Fetch Pokemons
+  useEffect(() => {
+    const pokeArray = []
+    for (let i = 0; i < 10; i++) {
+      pokeArray.push({ ...pokemon, id: i, name: pokemon.name + i })
+    }
+    setPokemons(pokeArray)
+  }, [])
+
+  // Get Best Score
+  useEffect(() => {
+    const localBestScore = localStorage.getItem('bestScore')
+    if (localBestScore) {
+      setBestScore(Number(localBestScore))
+    } else {
+      localStorage.setItem('bestScore', 0)
+    }
+  }, [])
+  // Update Best Score
+  useEffect(() => {
+    if (score > bestScore) {
+      localStorage.setItem('bestScore', score)
+      setBestScore(score)
+    }
+  }, [score, bestScore])
+  // Game End
+  useEffect(() => {
+    if (score === totalPokemons) {
+      setGameEnded(true)
+    }
+  }, [score, totalPokemons])
+
+  function handleClickSettings () {
     setSettingsIsOpen(true)
+  }
+  function handleCardClick (pokemonId) {
+    if (cardsSelected.includes(pokemonId)) {
+      setGameLoss(true)
+      setCardsSelected([])
+      setScore(0)
+      return
+    }
+    setCardsSelected([...cardsSelected, pokemonId])
+    setScore(score + 1)
   }
   const className = {
     'main-div': `absolute top-0 left-0 right-0 bottom-0 mx-auto min-h-dvh w-full flex flex-col justify-start gap-5 transition-all duration-300 max-w-screen-2xl ${settingsIsOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`
@@ -36,43 +76,16 @@ export default function GameLayout({ handleOpenMainModal }) {
     <>
       <div className={className['main-div']}>
         {/* header */}
-        <header className='mt-10 flex flex-wrap border-2 border-sky-500'>
-          {/* Top header */}
-          <div className='relative flex flex-wrap w-full items-center justify-center gap-x-5'>
-            <div className='flex flex-wrap items-center justify-center gap-1'>
-              <img
-                className='h-16 w-16 pb-1 '
-                src='/src/assets/pokeball.png'
-                alt='Pokeball image'
-              />
-              <h1 className='text-center text-6xl text-slate-700 drop-shadow-surrounded'>
-                Memory Card Game
-              </h1>
-            </div>
-            <div className='md:absolute md:right-3 flex flex-wrap items-center gap-2 text-4xl text-white'>
-              <button onClick={() => handleClickSettings()} className=''>
-                <FontAwesomeIcon className='mt-2' icon={faVolumeHigh} />
-              </button>
-              <button
-                onClick={() => handleClickSettings()}
-                className='ml-auto mr-3 text-4xl text-white hover:animate-spin'
-              >
-                <FontAwesomeIcon className='mt-2' icon={faGear} />
-              </button>
-            </div>
-          </div>
-          <div className='flex flex-1 flex-wrap items-center justify-center gap-5 text-3xl text-white'>
-            <p>Current Score: 0</p>
-            <p className='text-main drop-shadow-surrounded drop-shadow-surrounded-blue'>
-              Best Score: 0
-            </p>
-          </div>
-        </header>
+        <GameHeader handleClickSettings={handleClickSettings} score={score} bestScore={bestScore} />
         {/* Game Body */}
         <div className='mx-auto flex min-h-32 flex-wrap items-center justify-center gap-8 px-5 py-10 outline outline-1 outline-red-500 xl:max-w-screen-xl'>
           {/* Cards */}
           {pokemons.map((pokemon) => (
-            <PokemonCard key={pokemon.id} pokemon={pokemon} />
+            <PokemonCard
+              key={pokemon.id}
+              pokemon={pokemon}
+              handleCardClick={handleCardClick}
+            />
           ))}
         </div>
       </div>
