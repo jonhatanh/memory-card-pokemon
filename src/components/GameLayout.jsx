@@ -13,7 +13,7 @@ const pokemon = {
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/470.gif'
   }
 }
-function shuffleCards(list) {
+function shuffleCards (list) {
   const newOrder = []
   const cardsAux = [...list]
   while (cardsAux.length !== 0) {
@@ -33,7 +33,6 @@ export default function GameLayout ({ handleOpenMainModal }) {
   const [gameEnded, setGameEnded] = useState(false)
   const [gameLoss, setGameLoss] = useState(false)
   const [cardsSelected, setCardsSelected] = useState([])
-  const [shuffling, setShuffling] = useState(false)
   const cardContainerRef = useRef(null)
 
   // Fetch Pokemons
@@ -68,44 +67,6 @@ export default function GameLayout ({ handleOpenMainModal }) {
     }
   }, [score, totalPokemons])
 
-  // Shuffle animation
-  useEffect(() => {
-    if (!cardContainerRef.current) return
-    if (!shuffling) return
-    const handleAnimationOutEnd = (e) => {
-      if (e.animationName !== 'card-out') return
-
-      const newPokemons = shuffleCards(pokemons)
-      setPokemons(newPokemons)
-      cardContainerRef.current.classList.remove('card-out')
-      cardContainerRef.current.classList.add('card-in')
-    }
-    const handleAnimationInEnd = (e) => {
-      if (e.animationName !== 'card-in') return
-      cardContainerRef.current.classList.remove('card-in')
-      setShuffling(false)
-    }
-
-    if (shuffling) {
-      cardContainerRef.current.classList.add('card-out')
-      cardContainerRef.current.addEventListener(
-        'animationend',
-        handleAnimationOutEnd
-      )
-      cardContainerRef.current.addEventListener(
-        'animationend',
-        handleAnimationInEnd
-      )
-    }
-    // cardContainerRef.current.
-
-    // Needed for referencing the ref in the return function
-    const cleanupRef = cardContainerRef.current
-    return () => {
-      cleanupRef.removeEventListener('animationend', handleAnimationOutEnd)
-      cleanupRef.removeEventListener('animationend', handleAnimationInEnd)
-    }
-  }, [shuffling])
 
   function handleClickSettings () {
     setSettingsIsOpen(true)
@@ -119,9 +80,22 @@ export default function GameLayout ({ handleOpenMainModal }) {
     }
     setCardsSelected([...cardsSelected, pokemonId])
     setScore(score + 1)
-    setShuffling(true)
+    if (score + 1 !== totalPokemons) {
+      cardContainerRef.current.classList.add('card-out')
+    }
   }
-  
+
+  function handleAnimationEnd (e) {
+    if (e.animationName === 'card-out') {
+      const newPokemons = shuffleCards(pokemons)
+      setPokemons(newPokemons)
+      cardContainerRef.current.classList.remove('card-out')
+      cardContainerRef.current.classList.add('card-in')
+    } else if (e.animationName === 'card-in') {
+      cardContainerRef.current.classList.remove('card-in')
+    }
+  }
+
   const className = {
     'main-div': `absolute top-0 left-0 right-0 bottom-0 mx-auto min-h-dvh w-full flex flex-col justify-start gap-5 transition-all duration-300 max-w-screen-2xl ${settingsIsOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`
   }
@@ -138,6 +112,7 @@ export default function GameLayout ({ handleOpenMainModal }) {
         {/* Game Body */}
         <div
           ref={cardContainerRef}
+          onAnimationEndCapture={handleAnimationEnd}
           className='mx-auto flex min-h-32 flex-wrap items-center justify-center gap-8 px-5 py-10 xl:max-w-screen-xl'
         >
           {/* Cards */}
