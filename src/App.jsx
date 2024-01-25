@@ -18,7 +18,7 @@ function App () {
   }
   return (
     <>
-      <div className='relative min-h-dvh bg-black'>
+      <div className='relative min-h-dvh bg-black overflow-hidden'>
         <img
           className='absolute h-full w-full object-cover object-bottom opacity-60'
           src='/src/assets/forestBackground.png'

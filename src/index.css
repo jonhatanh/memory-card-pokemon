@@ -24,7 +24,9 @@
     0 2px white,
     0 -2px white;
 }
-
+.card {
+  animation: cardAppear 1 300ms ease-out;
+}
 .card-gradient {
   background: rgb(0, 0, 0);
   background: linear-gradient(
@@ -41,4 +43,62 @@
     rgba(30,41,59, 1) 15%,
     rgba(30,41,59, 1) 85%
   );
+}
+
+.shuffle {
+  pointer-events: none;
+  animation: shuffling 700ms forwards 1 ease-in-out;
+}
+.card-out {
+  pointer-events: none;
+  animation: card-out 400ms forwards 1 ease-in-out;
+}
+.card-in {
+  pointer-events: none;
+  animation: card-in 400ms 1 ease-in;
+}
+
+@keyframes shuffling {
+  33% {
+    opacity: 0;
+    translate: 15% 0;
+  }
+  66% {
+    opacity: 0;
+    translate: -15% 0;
+  }
+  100% {
+    translate: 0 0;
+    opacity: 100;
+  }
+
+}
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 100;
+    transform: scale(1);
+  }
+}
+@keyframes card-out {
+  from {
+
+  }
+  to {
+    translate: 15%;
+    opacity: 0;
+  }
+}
+@keyframes card-in {
+  from {
+    translate: -15%;
+    opacity: 0;
+  }
+  to {
+    translate: 0;
+    opacity: 100;
+  }
 }

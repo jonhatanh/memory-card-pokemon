@@ -1,7 +1,7 @@
 import { faGear, faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function GameHeader({ handleClickSettings, handleClickMusic, score, bestScore }) {
+export default function GameHeader({ handleClickSettings, handleClickMusic, score, bestScore, totalPokemons}) {
   return (
     <header className='mt-10 flex flex-wrap border-2 border-sky-500'>
       {/* Top header */}
@@ -29,7 +29,7 @@ export default function GameHeader({ handleClickSettings, handleClickMusic, scor
         </div>
       </div>
       <div className='flex flex-1 flex-wrap items-center justify-center gap-5 text-3xl text-white'>
-        <p>Current Score: {score}</p>
+        <p>Current Score: {score} / {totalPokemons}</p>
         <p className='text-main  drop-shadow-surrounded-blue'>
           Best Score: {bestScore}
         </p>
