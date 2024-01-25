@@ -13,6 +13,25 @@ const pokemon = {
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/470.gif'
   }
 }
+
+function randomBoolean() {
+  return !Math.floor(Math.random() * 2)
+}
+
+function getMessage (score, total) {
+  let message = ''
+  const percentage = (score / total) * 100
+
+  if (percentage >= 70) {
+    message = 'You are almost there!'
+  } else if (percentage >= 50) {
+    message = 'Not bad, keep going!'
+  } else {
+    message = randomBoolean() ? 'You can do better!' : 'Are you even trying?'
+  }
+  return message
+}
+
 function shuffleCards (list) {
   const newOrder = []
   const cardsAux = [...list]
@@ -30,11 +49,12 @@ export default function GameLayout ({ handleOpenMainModal }) {
   const [totalPokemons, setTotalPokemons] = useState(10)
   const [score, setScore] = useState(0)
   const [bestScore, setBestScore] = useState(0)
-  const [gameEnded, setGameEnded] = useState(false)
-  const [gameLoss, setGameLoss] = useState(false)
   const [cardsSelected, setCardsSelected] = useState([])
+  const [gameMessage, setGameMessage] = useState('Welcome!')
   const cardContainerRef = useRef(null)
+  const gameMessageRef = useRef(null)
 
+  const gameEnded = score === totalPokemons
   // Fetch Pokemons
   useEffect(() => {
     const pokeArray = []
@@ -63,19 +83,20 @@ export default function GameLayout ({ handleOpenMainModal }) {
   // Game End
   useEffect(() => {
     if (score === totalPokemons) {
-      setGameEnded(true)
+      setGameMessage('You did it! 🗿')
     }
   }, [score, totalPokemons])
-
 
   function handleClickSettings () {
     setSettingsIsOpen(true)
   }
   function handleCardClick (pokemonId) {
     if (cardsSelected.includes(pokemonId)) {
-      setGameLoss(true)
+      setGameMessage(getMessage(score, totalPokemons))
       setCardsSelected([])
       setScore(0)
+      gameMessageRef.current.classList.remove('hidden')
+      gameMessageRef.current.classList.add('flex')
       return
     }
     setCardsSelected([...cardsSelected, pokemonId])
@@ -94,6 +115,12 @@ export default function GameLayout ({ handleOpenMainModal }) {
     } else if (e.animationName === 'card-in') {
       cardContainerRef.current.classList.remove('card-in')
     }
+  }
+  function handleAnimationEndMessage (e) {
+    console.log(e)
+    if (e.animationName !== 'messageAppear') return
+    gameMessageRef.current.classList.remove('flex')
+    gameMessageRef.current.classList.add('hidden')
   }
 
   const className = {
@@ -136,6 +163,15 @@ export default function GameLayout ({ handleOpenMainModal }) {
           Go to main menu (end game)
         </MenuButton>
       </Modal>
+      <div
+        ref={gameMessageRef}
+        onAnimationEnd={handleAnimationEndMessage}
+        className='pointer-events-none absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center'
+      >
+        <p className='game-message bg-gradient-to-r from-transparent via-secondary to-transparent px-20 py-1 text-6xl tracking-widest text-main'>
+          {gameMessage}
+        </p>
+      </div>
     </>
   )
 }

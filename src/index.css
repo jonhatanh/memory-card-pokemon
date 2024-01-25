@@ -45,10 +45,10 @@
   );
 }
 
-.shuffle {
+/* .shuffle {
   pointer-events: none;
   animation: shuffling 700ms forwards 1 ease-in-out;
-}
+} */
 .card-out {
   pointer-events: none;
   animation: card-out 400ms forwards 1 ease-in-out;
@@ -56,6 +56,33 @@
 .card-in {
   pointer-events: none;
   animation: card-in 400ms 1 ease-in;
+}
+
+.game-message {
+  animation: messageAppear 1 forwards ease-in-out 1.5s;
+}
+
+@keyframes messageAppear {
+  0% {
+    opacity: 0;
+    transform: scaleX(2.5);
+    translate: -100%;
+  }
+  35% {
+    opacity: 100;
+    transform: scaleX(1);
+    translate: 0;
+  }
+  85% {
+    opacity: 100;
+    transform: scaleX(1);
+    translate: 0;
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(2.5);
+    translate: 100%;
+  }
 }
 
 @keyframes shuffling {
