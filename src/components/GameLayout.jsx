@@ -14,7 +14,7 @@ const pokemon = {
   }
 }
 
-function randomBoolean() {
+function randomBoolean () {
   return !Math.floor(Math.random() * 2)
 }
 
@@ -23,7 +23,7 @@ function getMessage (score, total) {
   const percentage = (score / total) * 100
 
   if (percentage >= 70) {
-    message = 'You are almost there!'
+    message = 'You\'re almost there!'
   } else if (percentage >= 50) {
     message = 'Not bad, keep going!'
   } else {
@@ -43,10 +43,50 @@ function shuffleCards (list) {
   return newOrder
 }
 
+function getRandomNumbersInRange (qtyNumbers, min = 0, max = 649) {
+  const array = []
+  for (let i = 0; i < qtyNumbers;) {
+    const randomNumber = Math.floor(Math.random() * (max + 1) + min)
+    if (array.indexOf(randomNumber) !== -1) continue
+    array.push(randomNumber)
+    i++
+  }
+  return array
+}
+
+function getRandomPokemons(quantity) {
+  const pokeIds = getRandomNumbersInRange(quantity)
+  const pokePromises = pokeIds.map((id) =>
+    fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+  )
+  return Promise.all(pokePromises)
+    .then((responses) => {
+      const jsonPromises = responses.map((res) => res.json())
+      return Promise.all(jsonPromises)
+    })
+    .then((newPokemons) => {
+      console.log(newPokemons)
+      return newPokemons.map((pokemon) => {
+        return {
+          id: pokemon.id,
+          name: pokemon.name,
+          sprites: {
+            normal:
+              pokemon.sprites.versions['generation-v']['black-white']
+                .front_default,
+            animated:
+              pokemon.sprites.versions['generation-v']['black-white'].animated
+                .front_default
+          }
+        }
+      })
+    })
+}
+
 export default function GameLayout ({ handleOpenMainModal }) {
   const [pokemons, setPokemons] = useState([])
   const [settingsIsOpen, setSettingsIsOpen] = useState(false)
-  const [totalPokemons, setTotalPokemons] = useState(10)
+  const [totalPokemons, setTotalPokemons] = useState(3)
   const [score, setScore] = useState(0)
   const [bestScore, setBestScore] = useState(0)
   const [cardsSelected, setCardsSelected] = useState([])
@@ -57,11 +97,18 @@ export default function GameLayout ({ handleOpenMainModal }) {
   const gameEnded = score === totalPokemons
   // Fetch Pokemons
   useEffect(() => {
-    const pokeArray = []
-    for (let i = 0; i < totalPokemons; i++) {
-      pokeArray.push({ ...pokemon, id: i, name: pokemon.name + i })
+    // for (let i = 0; i < pokeIds.length; i++) {
+    //   pokeArray.push({
+    //     ...pokemon,
+    //     id: pokeIds[i],
+    //     name: pokemon.name + pokeIds[i]
+    //   })
+    // }
+    const getPokemons = async () => {
+      const newPokemons = await getRandomPokemons(totalPokemons)
+      setPokemons(newPokemons)
     }
-    setPokemons(pokeArray)
+    getPokemons()
   }, [totalPokemons])
 
   // Get Best Score
@@ -88,7 +135,7 @@ export default function GameLayout ({ handleOpenMainModal }) {
       gameMessageRef.current.classList.add('flex')
       cardContainerRef.current.classList.add('pointer-events-none')
     }
-    
+
     const elementRef = cardContainerRef.current
     return () => {
       elementRef.classList.remove('pointer-events-none')
@@ -130,14 +177,21 @@ export default function GameLayout ({ handleOpenMainModal }) {
     gameMessageRef.current.classList.add('hidden')
   }
 
-  function resetGame() {
+  async function handleRerollPokemons() {
+    const newPokemons = await getRandomPokemons(totalPokemons)
+    resetGame()
+    setPokemons(newPokemons)
+    setSettingsIsOpen(false)
+  }
+
+  function resetGame () {
     setCardsSelected([])
     setScore(0)
   }
-  function increaseDifficulty() {
-    setTotalPokemons(totalPokemons + 5)
+  function increaseDifficulty () {
+    setTotalPokemons(totalPokemons + 3)
   }
-  function handleNextLevel() {
+  function handleNextLevel () {
     resetGame()
     increaseDifficulty()
   }
@@ -177,10 +231,10 @@ export default function GameLayout ({ handleOpenMainModal }) {
         <MenuButton onClick={() => setSettingsIsOpen(false)}>
           Back to game
         </MenuButton>
-        <MenuButton onClick={() => ''}>
-          Reroll pokemons (reset game with new pokemons)
+        <MenuButton onClick={handleRerollPokemons}>
+          Reroll pokemons (reset current game with new pokemons)
         </MenuButton>
-        <MenuButton onClick={() => handleOpenMainModal()}>
+        <MenuButton onClick={handleOpenMainModal}>
           Go to main menu (end game)
         </MenuButton>
       </Modal>
