@@ -83,7 +83,7 @@ function getRandomPokemons(quantity) {
     })
 }
 
-export default function GameLayout({ handleOpenMainModal }) {
+export default function GameLayout({ handleOpenMainModal, handleToggleMute, musicMuted }) {
   const [pokemons, setPokemons] = useState([])
   const [settingsIsOpen, setSettingsIsOpen] = useState(false)
   const [totalPokemons, setTotalPokemons] = useState(3)
@@ -214,7 +214,10 @@ export default function GameLayout({ handleOpenMainModal }) {
   const className = {
     'main-div': `absolute top-0 left-0 right-0 bottom-0 mx-auto min-h-dvh w-full flex flex-col justify-start gap-5 transition-all duration-300 max-w-screen-2xl ${settingsIsOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`
   }
-  const spriteButtonText = sprite === 'normal' ? 'Change to animated sprites' : 'Change to static sprites'
+  const spriteButtonText =
+    sprite === 'normal'
+      ? 'Change to animated sprites'
+      : 'Change to static sprites'
   return (
     <>
       <div className={className['main-div']}>
@@ -226,6 +229,8 @@ export default function GameLayout({ handleOpenMainModal }) {
           totalPokemons={totalPokemons}
           gameEnded={gameEnded}
           handleNextLevel={handleNextLevel}
+          handleToggleMute={handleToggleMute}
+          musicMuted={musicMuted}
         />
         {/* Game Body */}
         <div
@@ -250,7 +255,7 @@ export default function GameLayout({ handleOpenMainModal }) {
                 src='/src/assets/pokeball.png'
                 alt='Pokeball image'
               />
-              <p className='text-white text-3xl animate-pulse'>Loading...</p>
+              <p className='animate-pulse text-3xl text-white'>Loading...</p>
             </div>
           )}
         </div>
@@ -259,9 +264,7 @@ export default function GameLayout({ handleOpenMainModal }) {
         <MenuButton onClick={() => setSettingsIsOpen(false)}>
           Back to game
         </MenuButton>
-        <MenuButton onClick={handleChangeSprite}>
-          {spriteButtonText}
-        </MenuButton>
+        <MenuButton onClick={handleChangeSprite}>{spriteButtonText}</MenuButton>
         <MenuButton onClick={handleRerollPokemons}>
           Reroll pokemons (reset current game with new pokemons)
         </MenuButton>

@@ -3,19 +3,21 @@ import {
   faGear,
   faPlay,
   faRotateRight,
-  faVolumeHigh
+  faVolumeHigh,
+  faVolumeXmark
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import IconButton from './IconButton'
 
 export default function GameHeader({
   handleClickSettings,
-  handleClickMusic,
   score,
   bestScore,
   totalPokemons,
   gameEnded,
   handleNextLevel,
+  handleToggleMute,
+  musicMuted,
 }) {
   return (
     <header className='mt-10 flex flex-wrap '>
@@ -33,17 +35,17 @@ export default function GameHeader({
         </div>
         <div className='flex flex-wrap items-center gap-2 text-4xl text-white md:absolute md:right-7'>
           {gameEnded && (
-            <IconButton hoverText='Next Level' onClick={()=> handleNextLevel()}>
+            <IconButton hoverText='Next Level' onClick={handleNextLevel}>
               <FontAwesomeIcon className='text-main' icon={faForward} />
             </IconButton>
           )}
-          <IconButton hoverText='Mute Music' onClick={() => handleClickMusic()}>
-            <FontAwesomeIcon icon={faVolumeHigh} />
-          </IconButton>
           <IconButton
-            hoverText='Settings'
-            onClick={() => handleClickSettings()}
+            hoverText={musicMuted ? 'Unmute Music' : 'Mute Music'}
+            onClick={handleToggleMute}
           >
+            <FontAwesomeIcon icon={musicMuted ? faVolumeXmark : faVolumeHigh} />
+          </IconButton>
+          <IconButton hoverText='Settings' onClick={handleClickSettings}>
             <FontAwesomeIcon icon={faGear} />
           </IconButton>
         </div>
