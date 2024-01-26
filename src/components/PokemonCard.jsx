@@ -4,7 +4,7 @@ function firstToUpper(str) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-export default function PokemonCard({ pokemon, handleCardClick, shuffling }) {
+export default function PokemonCard({ pokemon, handleCardClick, sprite }) {
   return (
     <button
       className='card group relative flex h-64 w-48 flex-col gap-4 overflow-hidden rounded-lg p-2 transition-all'
@@ -14,7 +14,7 @@ export default function PokemonCard({ pokemon, handleCardClick, shuffling }) {
       <div className='relative z-10 h-44 w-full'>
         <img
           className='h-full w-full'
-          src={pokemon.sprites.animated}
+          src={pokemon.sprites[sprite]}
           alt={`${pokemon.name} sprite gif`}
         />
       </div>

@@ -14,16 +14,16 @@ const pokemon = {
   }
 }
 
-function randomBoolean () {
+function randomBoolean() {
   return !Math.floor(Math.random() * 2)
 }
 
-function getMessage (score, total) {
+function getMessage(score, total) {
   let message = ''
   const percentage = (score / total) * 100
 
   if (percentage >= 70) {
-    message = 'You\'re almost there!'
+    message = "You're almost there!"
   } else if (percentage >= 50) {
     message = 'Not bad, keep going!'
   } else {
@@ -32,7 +32,7 @@ function getMessage (score, total) {
   return message
 }
 
-function shuffleCards (list) {
+function shuffleCards(list) {
   const newOrder = []
   const cardsAux = [...list]
   while (cardsAux.length !== 0) {
@@ -43,9 +43,9 @@ function shuffleCards (list) {
   return newOrder
 }
 
-function getRandomNumbersInRange (qtyNumbers, min = 0, max = 649) {
+function getRandomNumbersInRange(qtyNumbers, min = 0, max = 649) {
   const array = []
-  for (let i = 0; i < qtyNumbers;) {
+  for (let i = 0; i < qtyNumbers; ) {
     const randomNumber = Math.floor(Math.random() * (max + 1) + min)
     if (array.indexOf(randomNumber) !== -1) continue
     array.push(randomNumber)
@@ -83,7 +83,7 @@ function getRandomPokemons(quantity) {
     })
 }
 
-export default function GameLayout ({ handleOpenMainModal }) {
+export default function GameLayout({ handleOpenMainModal }) {
   const [pokemons, setPokemons] = useState([])
   const [settingsIsOpen, setSettingsIsOpen] = useState(false)
   const [totalPokemons, setTotalPokemons] = useState(3)
@@ -91,24 +91,34 @@ export default function GameLayout ({ handleOpenMainModal }) {
   const [bestScore, setBestScore] = useState(0)
   const [cardsSelected, setCardsSelected] = useState([])
   const [gameMessage, setGameMessage] = useState('Welcome!')
+  const [sprite, setSprite] = useState('normal')
   const cardContainerRef = useRef(null)
   const gameMessageRef = useRef(null)
 
   const gameEnded = score === totalPokemons
   // Fetch Pokemons
   useEffect(() => {
-    // for (let i = 0; i < pokeIds.length; i++) {
-    //   pokeArray.push({
-    //     ...pokemon,
-    //     id: pokeIds[i],
-    //     name: pokemon.name + pokeIds[i]
-    //   })
-    // }
-    const getPokemons = async () => {
-      const newPokemons = await getRandomPokemons(totalPokemons)
-      setPokemons(newPokemons)
+    const pokeArray = []
+    const pokeIds = getRandomNumbersInRange(totalPokemons)
+    setPokemons([])
+    for (let i = 0; i < pokeIds.length; i++) {
+      pokeArray.push({
+        ...pokemon,
+        id: pokeIds[i],
+        name: pokemon.name + pokeIds[i]
+      })
     }
-    getPokemons()
+    setTimeout(() => setPokemons(pokeArray), 1000)
+    // const getPokemons = async () => {
+    //   setPokemons([])
+    //   const newPokemons = await getRandomPokemons(totalPokemons)
+    //   if (!ignore) setPokemons(newPokemons)
+    // }
+    // let ignore = false
+    // getPokemons()
+    // return () => {
+    //   ignore = true
+    // }
   }, [totalPokemons])
 
   // Get Best Score
@@ -142,10 +152,10 @@ export default function GameLayout ({ handleOpenMainModal }) {
     }
   }, [score, totalPokemons])
 
-  function handleClickSettings () {
+  function handleClickSettings() {
     setSettingsIsOpen(true)
   }
-  function handleCardClick (pokemonId) {
+  function handleCardClick(pokemonId) {
     if (cardsSelected.includes(pokemonId)) {
       setGameMessage(getMessage(score, totalPokemons))
       resetGame()
@@ -160,7 +170,7 @@ export default function GameLayout ({ handleOpenMainModal }) {
     }
   }
 
-  function handleAnimationEnd (e) {
+  function handleAnimationEnd(e) {
     if (e.animationName === 'card-out') {
       const newPokemons = shuffleCards(pokemons)
       setPokemons(newPokemons)
@@ -170,7 +180,7 @@ export default function GameLayout ({ handleOpenMainModal }) {
       cardContainerRef.current.classList.remove('card-in')
     }
   }
-  function handleAnimationEndMessage (e) {
+  function handleAnimationEndMessage(e) {
     console.log(e)
     if (e.animationName !== 'messageAppear') return
     gameMessageRef.current.classList.remove('flex')
@@ -184,14 +194,19 @@ export default function GameLayout ({ handleOpenMainModal }) {
     setSettingsIsOpen(false)
   }
 
-  function resetGame () {
+  function handleChangeSprite() {
+    setSprite(sprite === 'normal' ? 'animated' : 'normal')
+    setSettingsIsOpen(false)
+  }
+
+  function resetGame() {
     setCardsSelected([])
     setScore(0)
   }
-  function increaseDifficulty () {
+  function increaseDifficulty() {
     setTotalPokemons(totalPokemons + 3)
   }
-  function handleNextLevel () {
+  function handleNextLevel() {
     resetGame()
     increaseDifficulty()
   }
@@ -199,6 +214,7 @@ export default function GameLayout ({ handleOpenMainModal }) {
   const className = {
     'main-div': `absolute top-0 left-0 right-0 bottom-0 mx-auto min-h-dvh w-full flex flex-col justify-start gap-5 transition-all duration-300 max-w-screen-2xl ${settingsIsOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`
   }
+  const spriteButtonText = sprite === 'normal' ? 'Change to animated sprites' : 'Change to static sprites'
   return (
     <>
       <div className={className['main-div']}>
@@ -215,21 +231,36 @@ export default function GameLayout ({ handleOpenMainModal }) {
         <div
           ref={cardContainerRef}
           onAnimationEndCapture={handleAnimationEnd}
-          className='mx-auto flex min-h-32 flex-wrap items-center justify-center gap-8 px-5 py-10 xl:max-w-screen-xl overflow-y-auto '
+          className='mx-auto flex min-h-32 flex-wrap items-center justify-center gap-8 overflow-y-auto px-5 py-10 xl:max-w-screen-xl '
         >
           {/* Cards */}
-          {pokemons.map((pokemon) => (
-            <PokemonCard
-              key={pokemon.id}
-              pokemon={pokemon}
-              handleCardClick={handleCardClick}
-            />
-          ))}
+          {pokemons.length > 0 ? (
+            pokemons.map((pokemon) => (
+              <PokemonCard
+                key={pokemon.id}
+                pokemon={pokemon}
+                handleCardClick={handleCardClick}
+                sprite={sprite}
+              />
+            ))
+          ) : (
+            <div className='flex flex-col items-center'>
+              <img
+                className='h-24 w-24 animate-spin'
+                src='/src/assets/pokeball.png'
+                alt='Pokeball image'
+              />
+              <p className='text-white text-3xl animate-pulse'>Loading...</p>
+            </div>
+          )}
         </div>
       </div>
       <Modal isOpen={settingsIsOpen}>
         <MenuButton onClick={() => setSettingsIsOpen(false)}>
           Back to game
+        </MenuButton>
+        <MenuButton onClick={handleChangeSprite}>
+          {spriteButtonText}
         </MenuButton>
         <MenuButton onClick={handleRerollPokemons}>
           Reroll pokemons (reset current game with new pokemons)
