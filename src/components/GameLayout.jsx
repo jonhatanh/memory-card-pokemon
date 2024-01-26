@@ -46,7 +46,7 @@ function shuffleCards (list) {
 export default function GameLayout ({ handleOpenMainModal }) {
   const [pokemons, setPokemons] = useState([])
   const [settingsIsOpen, setSettingsIsOpen] = useState(false)
-  const [totalPokemons, setTotalPokemons] = useState(20)
+  const [totalPokemons, setTotalPokemons] = useState(10)
   const [score, setScore] = useState(0)
   const [bestScore, setBestScore] = useState(0)
   const [cardsSelected, setCardsSelected] = useState([])
@@ -161,7 +161,7 @@ export default function GameLayout ({ handleOpenMainModal }) {
         <div
           ref={cardContainerRef}
           onAnimationEndCapture={handleAnimationEnd}
-          className='mx-auto flex min-h-32 flex-wrap items-center justify-center gap-8 px-5 py-10 xl:max-w-screen-xl overflow-y-scroll '
+          className='mx-auto flex min-h-32 flex-wrap items-center justify-center gap-8 px-5 py-10 xl:max-w-screen-xl overflow-y-auto '
         >
           {/* Cards */}
           {pokemons.map((pokemon) => (

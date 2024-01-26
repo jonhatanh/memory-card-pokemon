@@ -27,28 +27,81 @@
 .card {
   animation: cardAppear 1 300ms ease-out;
 }
-.card-gradient {
+
+.card:hover {
+  box-shadow: 0 0 10px 3px red;
+  transform: scale(1.1);
+}
+.card-background {
+  position: absolute;
+  opacity: 0.5;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  content: '';
+  z-index: 0;
+  transition: padding 500ms ease-in-out;
+  --line-color: black;
+  --card-corner-color: rgb(199, 1, 1);
+  --card-middle-color: rgb(221, 221, 221);
+  background: linear-gradient(
+    180deg,
+    var(--card-corner-color) 47%,
+    var(--card-middle-color) 53%
+  );
+}
+/* .card-gradient {
+  --line-color: black;
+  --card-corner-color: rgba(199, 1, 1, 0.550);
+  --card-middle-color: rgba(221, 221, 221, 0.550);
   background: rgb(0, 0, 0);
   background: linear-gradient(
-    90deg,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(30,41,59, 1) 10%,
-    rgba(30,41,59, 1) 90%,
-    rgba(0, 0, 0, 1) 100%
+    180deg,
+    var(--card-corner-color) 47%,
+    var(--card-middle-color) 53%
+  );
+} */
+.card:hover .card-background {
+  opacity: 1;
+  --card-corner-color: rgb(199, 1, 1);
+  --card-middle-color: rgb(221, 221, 221);
+  background: linear-gradient(
+    180deg,
+    var(--card-corner-color) 47%,
+    var(--card-middle-color) 53%
   );
 }
-.card-gradient:hover {
-  background: linear-gradient(
-    90deg,
-    rgba(30,41,59, 1) 15%,
-    rgba(30,41,59, 1) 85%
-  );
+.card:hover .card-background::before {
+  padding-bottom: 15px;
+}
+.card-background::before {
+  transition: padding 150ms ease-out;
+  position: absolute;
+  height: 5px;
+  width: 120%;
+  content: '';
+  background-color: var(--line-color);
+  left: -10%;
+  top: 50%;
+  z-index: 1;
+}
+.card-background::after {
+  position: absolute;
+  height: 90px;
+  width: 90px;
+  border: 5px solid var(--line-color);
+  border-radius: 50%;
+  content: '';
+  background-color: rgb(211, 211, 211);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
 }
 
-/* .shuffle {
-  pointer-events: none;
-  animation: shuffling 700ms forwards 1 ease-in-out;
-} */
 .card-out {
   pointer-events: none;
   animation: card-out 400ms forwards 1 ease-in-out;
@@ -98,7 +151,6 @@
     translate: 0 0;
     opacity: 100;
   }
-
 }
 @keyframes cardAppear {
   from {
@@ -112,7 +164,6 @@
 }
 @keyframes card-out {
   from {
-
   }
   to {
     translate: 15%;
