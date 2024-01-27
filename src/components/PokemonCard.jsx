@@ -1,10 +1,8 @@
-import { useEffect, useRef } from 'react'
-
-function firstToUpper(str) {
+function firstToUpper (str) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-export default function PokemonCard({ pokemon, handleCardClick, sprite }) {
+export default function PokemonCard ({ pokemon, handleCardClick, sprite }) {
   return (
     <button
       className='card group relative flex h-64 w-48 flex-col gap-4 overflow-hidden rounded-lg p-2 transition-all'
@@ -18,7 +16,7 @@ export default function PokemonCard({ pokemon, handleCardClick, sprite }) {
           alt={`${pokemon.name} sprite gif`}
         />
       </div>
-      <p className='absolute bottom-0 px-1 left-0 right-0 w-full text-center text-3xl text-white transition-all group-hover:tracking-wider group-hover:text-black text-wrap break-words'>
+      <p className='absolute bottom-0 left-0 right-0 w-full text-wrap break-words px-1 text-center text-3xl text-white transition-all group-hover:tracking-wider group-hover:text-black'>
         {firstToUpper(pokemon.name)}
       </p>
     </button>

@@ -20,7 +20,7 @@ export default function GameHeader({
   musicMuted,
 }) {
   return (
-    <header className='mt-10 flex flex-wrap '>
+    <header className='mt-10 flex flex-wrap'>
       {/* Top header */}
       <div className='relative flex w-full flex-wrap items-center justify-center gap-x-5 gap-y-7'>
         <div className='flex flex-wrap items-center justify-center gap-1'>
@@ -36,7 +36,7 @@ export default function GameHeader({
         <div className='flex flex-wrap items-center gap-2 text-4xl text-white md:absolute md:right-7'>
           {gameEnded && (
             <IconButton hoverText='Next Level' onClick={handleNextLevel}>
-              <FontAwesomeIcon className='text-main' icon={faForward} />
+              <FontAwesomeIcon className='text-main animate-bounce' icon={faForward} />
             </IconButton>
           )}
           <IconButton

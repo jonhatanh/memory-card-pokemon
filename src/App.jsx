@@ -1,4 +1,3 @@
-import { faCaretRight, faGear } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useRef, useState } from 'react'
 import GameLayout from './components/GameLayout'
@@ -30,8 +29,14 @@ function App () {
           src='/src/assets/forestBackground.png'
           alt='Main Menu Image'
         />
-        <audio ref={audioRef} src={audioUrl} loop autoPlay={!isMuted} muted={isMuted} />
-        {/* Main Menu */}
+        <audio
+          ref={audioRef}
+          src={audioUrl}
+          loop
+          autoPlay={!isMuted}
+          muted={isMuted}
+        />
+
         {modalIsOpen && (
           <Modal isOpen={modalIsOpen}>
             <MenuButton onClick={() => setModalIsOpen(false)}>
@@ -40,13 +45,28 @@ function App () {
             <MenuButton onClick={handleToggleMute}>
               Music: {isMuted ? 'OFF' : 'ON'}
             </MenuButton>
-            <MenuButton onClick={() => window.open('https://github.com/jonhatanh/memory-card-pokemon', '_blank')}>
-              GitHub Repo  <FontAwesomeIcon className='ml-1 text-lg hover:animate-spin' icon={faGithub} />
+            <MenuButton
+              onClick={() =>
+                window.open(
+                  'https://github.com/jonhatanh/memory-card-pokemon',
+                  '_blank'
+                )}
+            >
+              GitHub Repo{' '}
+              <FontAwesomeIcon
+                className='ml-1 text-lg hover:animate-spin'
+                icon={faGithub}
+              />
             </MenuButton>
           </Modal>
         )}
-
-        {!modalIsOpen && <GameLayout handleOpenMainModal={handleOpenModal} handleToggleMute={handleToggleMute} musicMuted={isMuted} />}
+        {!modalIsOpen && (
+          <GameLayout
+            handleOpenMainModal={handleOpenModal}
+            handleToggleMute={handleToggleMute}
+            musicMuted={isMuted}
+          />
+        )}
       </div>
     </>
   )
