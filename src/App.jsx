@@ -1,19 +1,25 @@
 import { faCaretRight, faGear } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import GameLayout from './components/GameLayout'
 import Modal from './components/Modal'
 import MenuButton from './components/MenuButton'
+import { faGithub } from '@fortawesome/free-brands-svg-icons'
 
 const audioUrl = '/src/assets/EternaForestCompressed.mp3'
 function App () {
   const [modalIsOpen, setModalIsOpen] = useState(true)
-  const [isMuted, setIsMuted] = useState(false)
+  const [isMuted, setIsMuted] = useState(true)
+  const audioRef = useRef(null)
   function handleOpenModal (value = true) {
     setModalIsOpen(value)
   }
 
   const handleToggleMute = () => {
+    if (audioRef && isMuted) {
+      audioRef.current.currentTime = 0
+      audioRef.current.play()
+    }
     setIsMuted(!isMuted)
   }
   return (
@@ -24,7 +30,7 @@ function App () {
           src='/src/assets/forestBackground.png'
           alt='Main Menu Image'
         />
-        <audio src={audioUrl} loop autoPlay={!isMuted} muted={isMuted} />
+        <audio ref={audioRef} src={audioUrl} loop autoPlay={!isMuted} muted={isMuted} />
         {/* Main Menu */}
         {modalIsOpen && (
           <Modal isOpen={modalIsOpen}>
@@ -33,6 +39,9 @@ function App () {
             </MenuButton>
             <MenuButton onClick={handleToggleMute}>
               Music: {isMuted ? 'OFF' : 'ON'}
+            </MenuButton>
+            <MenuButton onClick={() => window.open('https://github.com/jonhatanh/memory-card-pokemon', '_blank')}>
+              GitHub Repo  <FontAwesomeIcon className='ml-1 text-lg hover:animate-spin' icon={faGithub} />
             </MenuButton>
           </Modal>
         )}

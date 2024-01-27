@@ -83,7 +83,16 @@ function getRandomPokemons(quantity) {
     })
 }
 
-export default function GameLayout({ handleOpenMainModal, handleToggleMute, musicMuted }) {
+const audios = {
+  success: '/src/assets/Pokemon-AButton.mp3',
+  fail: '/src/assets/fail.mp3'
+}
+
+export default function GameLayout({
+  handleOpenMainModal,
+  handleToggleMute,
+  musicMuted
+}) {
   const [pokemons, setPokemons] = useState([])
   const [settingsIsOpen, setSettingsIsOpen] = useState(false)
   const [totalPokemons, setTotalPokemons] = useState(3)
@@ -94,6 +103,7 @@ export default function GameLayout({ handleOpenMainModal, handleToggleMute, musi
   const [sprite, setSprite] = useState('normal')
   const cardContainerRef = useRef(null)
   const gameMessageRef = useRef(null)
+  const audioRef = useRef(null)
 
   const gameEnded = score === totalPokemons
   // Fetch Pokemons
@@ -158,16 +168,26 @@ export default function GameLayout({ handleOpenMainModal, handleToggleMute, musi
   function handleCardClick(pokemonId) {
     if (cardsSelected.includes(pokemonId)) {
       setGameMessage(getMessage(score, totalPokemons))
+      playCardSound(false)
       resetGame()
       gameMessageRef.current.classList.remove('hidden')
       gameMessageRef.current.classList.add('flex')
       return
     }
+    playCardSound(true)
     setCardsSelected([...cardsSelected, pokemonId])
     setScore(score + 1)
     if (score + 1 !== totalPokemons) {
       cardContainerRef.current.classList.add('card-out')
     }
+  }
+
+  function playCardSound(success = true) {
+    if (!audioRef) return
+    audioRef.current.currentTime = 0
+    audioRef.current.src = success ? audios.success : audios.fail
+    audioRef.current.volume = success ? 1 : 0.3
+    audioRef.current.play()
   }
 
   function handleAnimationEnd(e) {
@@ -281,6 +301,7 @@ export default function GameLayout({ handleOpenMainModal, handleToggleMute, musi
           {gameMessage}
         </p>
       </div>
+      <audio src='' ref={audioRef} />
     </>
   )
 }
