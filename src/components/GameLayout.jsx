@@ -131,7 +131,6 @@ export default function GameLayout({
     }
   }
   function handleAnimationEndMessage(e) {
-    console.log(e)
     if (e.animationName !== 'messageAppear') return
     gameMessageRef.current.classList.remove('flex')
     gameMessageRef.current.classList.add('hidden')

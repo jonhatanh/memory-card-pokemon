@@ -49,7 +49,6 @@ export function getRandomPokemons (quantity) {
       return Promise.all(jsonPromises)
     })
     .then((newPokemons) => {
-      console.log(newPokemons)
       return newPokemons.map((pokemon) => {
         return {
           id: pokemon.id,
