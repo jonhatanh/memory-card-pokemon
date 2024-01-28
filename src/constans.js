@@ -10,6 +10,7 @@ export const pokemon = {
 }
 
 export const audios = {
-  success: '/src/assets/Pokemon-AButton.mp3',
-  fail: '/src/assets/fail.mp3'
+  success: '/assets/Pokemon-AButton.mp3',
+  fail: '/assets/fail.mp3',
+  backgroundMusic: '/assets/EternaForestCompressed.mp3'
 }

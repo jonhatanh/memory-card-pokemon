@@ -206,7 +206,7 @@ export default function GameLayout({
             <div className='flex flex-col items-center'>
               <img
                 className='h-24 w-24 animate-spin'
-                src='/src/assets/pokeball.png'
+                src='/assets/pokeball.png'
                 alt='Pokeball image'
               />
               <p className='animate-pulse text-3xl text-white'>Loading...</p>

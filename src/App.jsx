@@ -4,8 +4,7 @@ import GameLayout from './components/GameLayout'
 import Modal from './components/Modal'
 import MenuButton from './components/MenuButton'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
-
-const audioUrl = '/src/assets/EternaForestCompressed.mp3'
+import { audios } from './constans'
 function App () {
   const [modalIsOpen, setModalIsOpen] = useState(true)
   const [isMuted, setIsMuted] = useState(true)
@@ -26,12 +25,12 @@ function App () {
       <div className='relative min-h-dvh overflow-hidden bg-black'>
         <img
           className='absolute h-full w-full object-cover object-bottom opacity-60'
-          src='/src/assets/forestBackground.png'
+          src='/assets/forestBackground.png'
           alt='Main Menu Image'
         />
         <audio
           ref={audioRef}
-          src={audioUrl}
+          src={audios.backgroundMusic}
           loop
           autoPlay={!isMuted}
           muted={isMuted}
