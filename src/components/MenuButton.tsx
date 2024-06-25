@@ -1,7 +1,8 @@
 import { faCaretRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { PropsWithChildren } from 'react'
 
-export default function MenuButton ({ children, onClick }) {
+export default function MenuButton ({ children, onClick } : PropsWithChildren<{ onClick: () => void }>) {
   return (
     <button
       onClick={() => onClick()}

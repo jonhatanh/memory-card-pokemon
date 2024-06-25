@@ -1,8 +1,14 @@
+
+type IconButtonProps = {
+  children: React.ReactNode
+  hoverText?: string
+} & React.ButtonHTMLAttributes<HTMLButtonElement>
+
 export default function IconButton ({
   children,
   hoverText = '',
   ...extraProps
-}) {
+}: IconButtonProps) {
   const haveText = hoverText !== ''
 
   return (

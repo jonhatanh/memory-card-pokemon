@@ -2,40 +2,59 @@ import { useEffect, useRef, useState } from 'react'
 import PokemonCard from './PokemonCard'
 import Modal from './Modal'
 import MenuButton from './MenuButton'
-import GameHeader from './GameHeader'
+import GameHeader from './GameHeader.tsx'
 import {
   getRandomNumbersInRange,
   getMessage,
   getRandomPokemons,
   shuffleCards
 } from '../helpers'
-import { audios, pokemon } from '../constans'
+import { PokemonList, audios, pokemon } from '../constans'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
+import useScore from '../hooks/useScore.ts'
+
+type GameLayoutProps = {
+  handleOpenMainModal: () => void
+  handleToggleMute: () => void
+  musicMuted: boolean
+}
+
+const spriteButtonData = {
+  normal: {
+    text: 'Change to animated sprites',
+    icon: <FontAwesomeIcon icon={faStar} className='animate-bounce group-hover:animate-spin text-base' />
+  },
+  animated: {
+    text: 'Change to static sprites',
+    icon: null
+  }
+} as const;
+
+export type Sprite = keyof typeof spriteButtonData
 
 export default function GameLayout({
   handleOpenMainModal,
   handleToggleMute,
   musicMuted
-}) {
-  const [pokemons, setPokemons] = useState([])
+}: GameLayoutProps) {
+  const [pokemons, setPokemons] = useState<PokemonList>([])
   const [settingsIsOpen, setSettingsIsOpen] = useState(false)
   const [totalPokemons, setTotalPokemons] = useState(3)
-  const [score, setScore] = useState(0)
-  const [bestScore, setBestScore] = useState(0)
-  const [cardsSelected, setCardsSelected] = useState([])
+  const { score, setScore, bestScore } = useScore()
+  const [cardsSelected, setCardsSelected] = useState<number[]>([])
   const [gameMessage, setGameMessage] = useState('Welcome!')
-  const [sprite, setSprite] = useState('animated')
-  const cardContainerRef = useRef(null)
-  const gameMessageRef = useRef(null)
-  const audioRef = useRef(null)
+  const [sprite, setSprite] = useState<Sprite>('animated')
+  const cardContainerRef = useRef<HTMLDivElement>(null)
+  const gameMessageRef = useRef<HTMLDivElement>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
 
   const gameEnded = score === totalPokemons
 
   // Fetch Pokemons
   useEffect(() => {
     /* Development */
-    // const pokeArray = []
+    // const pokeArray: PokemonList = []
     // const pokeIds = getRandomNumbersInRange(totalPokemons)
     // setPokemons([])
     // for (let i = 0; i < pokeIds.length; i++) {
@@ -59,38 +78,23 @@ export default function GameLayout({
     }
   }, [totalPokemons])
 
-  // Get Best Score
-  useEffect(() => {
-    const localBestScore = localStorage.getItem('bestScore')
-    if (localBestScore) {
-      setBestScore(Number(localBestScore))
-    } else {
-      localStorage.setItem('bestScore', 0)
-    }
-  }, [])
-  // Update Best Score
-  useEffect(() => {
-    if (score > bestScore) {
-      localStorage.setItem('bestScore', score)
-      setBestScore(score)
-    }
-  }, [score, bestScore])
   // Game End
   useEffect(() => {
     if (score === totalPokemons) {
       setGameMessage('You did it! 🗿')
       showMessage()
     } else {
-      score > 0 && cardContainerRef.current.classList.add('card-out')
+      score > 0 && cardContainerRef.current?.classList.add('card-out')
     }
 
     const elementRef = cardContainerRef.current
     return () => {
-      elementRef.classList.remove('pointer-events-none')
+      elementRef?.classList.remove('pointer-events-none')
     }
   }, [score, totalPokemons])
   // Show message on gameMessage update
   function showMessage() {
+    if (!gameMessageRef.current) return
     gameMessageRef.current.classList.remove('hidden')
     gameMessageRef.current.classList.add('flex')
   }
@@ -98,7 +102,7 @@ export default function GameLayout({
   function handleClickSettings() {
     setSettingsIsOpen(true)
   }
-  function handleCardClick(pokemonId) {
+  function handleCardClick(pokemonId: number) {
     if (gameEnded) return
     if (cardsSelected.includes(pokemonId)) {
       setGameMessage(getMessage(score, totalPokemons))
@@ -113,27 +117,27 @@ export default function GameLayout({
   }
 
   function playCardSound(success = true) {
-    if (!audioRef) return
+    if (!audioRef.current) return
     audioRef.current.currentTime = 0
     audioRef.current.src = success ? audios.success : audios.fail
     audioRef.current.volume = success ? 1 : 0.3
     audioRef.current.play()
   }
 
-  function handleAnimationEnd(e) {
+  function handleAnimationEnd(e: React.AnimationEvent<HTMLDivElement>) {
     if (e.animationName === 'card-out') {
       const newPokemons = shuffleCards(pokemons)
       setPokemons(newPokemons)
-      cardContainerRef.current.classList.remove('card-out')
-      cardContainerRef.current.classList.add('card-in')
+      cardContainerRef.current?.classList.remove('card-out')
+      cardContainerRef.current?.classList.add('card-in')
     } else if (e.animationName === 'card-in') {
-      cardContainerRef.current.classList.remove('card-in')
+      cardContainerRef.current?.classList.remove('card-in')
     }
   }
-  function handleAnimationEndMessage(e) {
+  function handleAnimationEndMessage(e: React.AnimationEvent<HTMLDivElement>) {
     if (e.animationName !== 'messageAppear') return
-    gameMessageRef.current.classList.remove('flex')
-    gameMessageRef.current.classList.add('hidden')
+    gameMessageRef.current?.classList.remove('flex')
+    gameMessageRef.current?.classList.add('hidden')
   }
 
   async function handleRerollPokemons() {
@@ -163,16 +167,7 @@ export default function GameLayout({
   const className = {
     'main-div': `absolute top-0 left-0 right-0 bottom-0 mx-auto min-h-dvh w-full flex flex-col justify-start gap-5 transition-all duration-300 max-w-screen-2xl ${settingsIsOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`
   }
-  const spriteButtonData = {
-    normal: {
-      text: 'Change to animated sprites',
-      icon: <FontAwesomeIcon icon={faStar} className='animate-bounce group-hover:animate-spin text-base' />
-    },
-    animated: {
-      text: 'Change to static sprites',
-      icon: null
-    }
-  }
+  
   return (
     <>
       <div className={className['main-div']}>

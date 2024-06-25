@@ -1,8 +1,17 @@
-function firstToUpper (str) {
+import { Pokemon } from "../constans";
+import { Sprite } from "./GameLayout";
+
+function firstToUpper (str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-export default function PokemonCard ({ pokemon, handleCardClick, sprite }) {
+type PokemonCardProps = {
+  pokemon: Pokemon;
+  handleCardClick: (id: number) => void;
+  sprite: Sprite;
+};
+
+export default function PokemonCard ({ pokemon, handleCardClick, sprite }: PokemonCardProps) {
   return (
     <button
       className='card group relative flex h-64 w-48 flex-col gap-4 overflow-hidden rounded-lg p-2 transition-all'
