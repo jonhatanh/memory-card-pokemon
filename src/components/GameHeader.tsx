@@ -5,7 +5,18 @@ import {
   faVolumeXmark
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import IconButton from './IconButton'
+import IconButton from './IconButton.tsx'
+
+type GameHeaderProps = {
+  handleClickSettings: () => void
+  score: number
+  bestScore: number
+  totalPokemons: number
+  gameEnded: boolean
+  handleNextLevel: () => void
+  handleToggleMute: () => void
+  musicMuted: boolean
+}
 
 export default function GameHeader({
   handleClickSettings,
@@ -16,7 +27,7 @@ export default function GameHeader({
   handleNextLevel,
   handleToggleMute,
   musicMuted,
-}) {
+}: GameHeaderProps) {
   return (
     <header className='mt-10 flex flex-wrap'>
       {/* Top header */}

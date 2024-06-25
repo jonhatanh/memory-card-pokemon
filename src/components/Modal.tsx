@@ -1,4 +1,6 @@
-export default function Modal ({ isOpen, children }) {
+import { PropsWithChildren } from "react"
+
+export default function Modal ({ isOpen, children }: PropsWithChildren<{ isOpen: boolean }>) {
   const className = {
     'main-div': `absolute left-0 top-0 flex mx-auto transition-all duration-300 min-h-dvh w-full items-center justify-center ${
       isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none -translate-y-8'

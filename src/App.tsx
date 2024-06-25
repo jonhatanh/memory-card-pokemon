@@ -1,20 +1,22 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useRef, useState } from 'react'
-import GameLayout from './components/GameLayout'
-import Modal from './components/Modal'
-import MenuButton from './components/MenuButton'
+import GameLayout from './components/GameLayout.tsx'
+import Modal from './components/Modal.tsx'
+import MenuButton from './components/MenuButton.tsx'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
-import { audios } from './constans'
+import { audios } from './constans.ts'
+
+
 function App () {
   const [modalIsOpen, setModalIsOpen] = useState(true)
   const [isMuted, setIsMuted] = useState(true)
-  const audioRef = useRef(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
   function handleOpenModal (value = true) {
     setModalIsOpen(value)
   }
 
   const handleToggleMute = () => {
-    if (audioRef && isMuted) {
+    if (audioRef.current && isMuted) {
       audioRef.current.currentTime = 0
       audioRef.current.play()
     }
