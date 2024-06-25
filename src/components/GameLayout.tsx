@@ -4,12 +4,15 @@ import Modal from './Modal'
 import MenuButton from './MenuButton'
 import GameHeader from './GameHeader.tsx'
 import {
-  getRandomNumbersInRange,
+  // getRandomNumbersInRange,
   getMessage,
   getRandomPokemons,
   shuffleCards
 } from '../helpers'
-import { PokemonList, audios, pokemon } from '../constans'
+import { PokemonList, 
+  audios, 
+  // pokemon 
+} from '../constans'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import useScore from '../hooks/useScore.ts'
