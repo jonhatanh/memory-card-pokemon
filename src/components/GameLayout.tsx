@@ -1,21 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import PokemonCard from './PokemonCard'
 import Modal from './Modal'
 import MenuButton from './MenuButton'
 import GameHeader from './GameHeader.tsx'
 import {
-  // getRandomNumbersInRange,
   getMessage,
   getRandomPokemons,
   shuffleCards
 } from '../helpers'
-import { PokemonList, 
-  audios, 
-  // pokemon 
+import {
+  audios,
 } from '../constans'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import useScore from '../hooks/useScore.ts'
+import usePokemons from '../hooks/usePokemons.ts'
 
 type GameLayoutProps = {
   handleOpenMainModal: () => void
@@ -41,66 +40,15 @@ export default function GameLayout({
   handleToggleMute,
   musicMuted
 }: GameLayoutProps) {
-  const [pokemons, setPokemons] = useState<PokemonList>([])
-  const [settingsIsOpen, setSettingsIsOpen] = useState(false)
   const [totalPokemons, setTotalPokemons] = useState(3)
-  const { score, setScore, bestScore } = useScore()
+  const [pokemons, setPokemons] = usePokemons(totalPokemons)
+  const [settingsIsOpen, setSettingsIsOpen] = useState(false)
+  const { score, setScore, bestScore, gameMessage, setGameMessage, cardContainerRef, gameMessageRef, showMessage } = useScore(totalPokemons)
   const [cardsSelected, setCardsSelected] = useState<number[]>([])
-  const [gameMessage, setGameMessage] = useState('Welcome!')
   const [sprite, setSprite] = useState<Sprite>('animated')
-  const cardContainerRef = useRef<HTMLDivElement>(null)
-  const gameMessageRef = useRef<HTMLDivElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
 
   const gameEnded = score === totalPokemons
-
-  // Fetch Pokemons
-  useEffect(() => {
-    /* Development */
-    // const pokeArray: PokemonList = []
-    // const pokeIds = getRandomNumbersInRange(totalPokemons)
-    // setPokemons([])
-    // for (let i = 0; i < pokeIds.length; i++) {
-    //   pokeArray.push({
-    //     ...pokemon,
-    //     id: pokeIds[i],
-    //     name: pokemon.name + pokeIds[i]
-    //   })
-    // }
-    // setTimeout(() => setPokemons(pokeArray), 1000)
-    /* RealAPI */
-    const getPokemons = async () => {
-      setPokemons([])
-      const newPokemons = await getRandomPokemons(totalPokemons)
-      if (!ignore) setPokemons(newPokemons)
-    }
-    let ignore = false
-    getPokemons()
-    return () => {
-      ignore = true
-    }
-  }, [totalPokemons])
-
-  // Game End
-  useEffect(() => {
-    if (score === totalPokemons) {
-      setGameMessage('You did it! 🗿')
-      showMessage()
-    } else {
-      score > 0 && cardContainerRef.current?.classList.add('card-out')
-    }
-
-    const elementRef = cardContainerRef.current
-    return () => {
-      elementRef?.classList.remove('pointer-events-none')
-    }
-  }, [score, totalPokemons])
-  // Show message on gameMessage update
-  function showMessage() {
-    if (!gameMessageRef.current) return
-    gameMessageRef.current.classList.remove('hidden')
-    gameMessageRef.current.classList.add('flex')
-  }
 
   function handleClickSettings() {
     setSettingsIsOpen(true)
